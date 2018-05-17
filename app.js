@@ -44,7 +44,7 @@ client.connect().then(function()
 		}
 		else
 		{
-			cooldown=5000;
+			cooldown=10000;
 		}
 		if(userName=="gaby12521")
 		{
@@ -174,13 +174,13 @@ client.connect().then(function()
 				}
 				else if(message.includes("SourPls"))
 				{
-					if(!isSourPlsTimedOut)
+					if(!isSourPlsTimedOut[canal])
 					{
 						client.say(canal, "SourPls");
-						isSourPlsTimedOut=true;
+						isSourPlsTimedOut[canal]=true;
 						setTimeout(function()
 						{
-							isSourPlsTimedOut=false;
+							isSourPlsTimedOut[canal]=false;
 						}, 10000);
 					}
 				}
