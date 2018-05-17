@@ -1,10 +1,10 @@
 ﻿var tmi = require("tmi.js");
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
-const TWITCH_ID=process.env.twitch-id;
-const TWITCH_OAUTH=process.env.twitch-oauth;
-const OSU_API_KEY=process.env.osu-api-key;
-const IRC_PASS=process.env.irc-pass;
-var canales=["#gaby12521", "#azer"];
+const TWITCH_ID=process.env.twitchid;
+const TWITCH_OAUTH=process.env.twitchoauth;
+const OSU_API_KEY=process.env.osuapikey;
+const IRC_PASS=process.env.ircpass;
+var canales=["#gaby12521", "#azer", "#abyssal"];
 var contador=0;
 var isTimedOut=inicializarTimeouts(canales);
 var cooldown=0;
