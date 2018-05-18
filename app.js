@@ -405,7 +405,7 @@ function parseLength(lengthSecs)
 }
 function comenzarRequest(user, canal, mapId, tipo, mensaje)
 {
-	requestBeatmap(tipo+"="+mapId, function(datos)
+	requestBeatmap(tipo+"="+mapId, canal, function(datos)
 	{
 		/*var request=user+" \u27a4 "+datos;
 		if(mensaje.split(" ").length>1)
