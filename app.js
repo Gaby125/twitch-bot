@@ -10,7 +10,8 @@ var isTimedOut=inicializarTimeouts(canales);
 var cooldown=0;
 var isSourPlsTimedOut=inicializarTimeouts(canales);
 var usuarioRequestId=-1;
-var ultimasDiez=[];
+var estaActivo={};
+var ultimasDiez=inicializarRepetidos(canales, estaActivo);
 var options =
 {
     options:
@@ -310,7 +311,7 @@ function notificarSeguidores()
 		}
 	}, 10000);
 }
-function requestBeatmap(id, callback)
+function requestBeatmap(id, canal, callback)
 {
 	var url="https://osu.ppy.sh/api/get_beatmaps?k="+OSU_API_KEY+"&"+id;
 	var xhttp=new XMLHttpRequest();
@@ -338,7 +339,7 @@ function requestBeatmap(id, callback)
 						}
 					}
 				}
-				if(!validarRepetido(map.beatmap_id))
+				if(!validarRepetido(map.beatmap_id, canal))
 				{
 					return;
 				}
@@ -386,7 +387,6 @@ function obtenerIdOsu(usuario, callback)
 	xhttp.send();
 	xhttp.onreadystatechange=function()
 	{
-		//console.log(xhttp);
 		if(xhttp.readyState==4)
 		{
 			if(xhttp.status==200)
@@ -420,21 +420,22 @@ function comenzarRequest(user, canal, mapId, tipo, mensaje)
 		ircBot.say(parseUsuarioOsu(canal), request);
 	});
 }
-function validarRepetido(id)
+function validarRepetido(id, canal)
 {
-	for(var i=0;i<ultimasDiez.length;i++)
+	estaActivo[canal]=true;
+	for(var i=0;i<ultimasDiez[canal].length;i++)
 	{
-		if(id==ultimasDiez[i])
+		if(id==ultimasDiez[canal][i])
 		{
 			return false;
 		}
 	}
-	if(ultimasDiez.length==10)
+	if(ultimasDiez[canal].length==10)
 	{
-		var auxiliar=ultimasDiez.slice(1);
-		ultimasDiez=auxiliar;
+		var auxiliar=ultimasDiez[canal].slice(1);
+		ultimasDiez[canal]=auxiliar;
 	}
-	ultimasDiez.push(id);
+	ultimasDiez[canal].push(id);
 	return true;
 }
 function parseStatus(estado)
@@ -517,4 +518,38 @@ function inicializarTimeouts(canales)
 		});
 	}
 	return timeouts;
+}
+function inicializarRepetidos(canales, estaActivo)
+{
+	var i=0;
+	var repetidos={};
+	for(var i=0;i<canales.length;i++)
+	{
+		Object.defineProperty(repetidos, canales[i],
+		{
+			enumerable: true,
+			configurable: true,
+			writable: true,
+			value: []
+		});
+		Object.defineProperty(estaActivo, canales[i],
+		{
+			enumerable: true,
+			configurable: true,
+			writable: true,
+			value: false
+		});
+		setInterval(function(repetidos, estaActivo)
+		{
+			if(estaActivo)
+			{
+				estaActivo=false;
+			}
+			else
+			{
+				repetidos.splice(0, repetidos.length);
+			}
+		}, 3600000, repetidos[canales[i]], estaActivo[canales[i]]);
+	}
+	return repetidos;
 }
