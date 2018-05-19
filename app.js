@@ -1,10 +1,13 @@
 ﻿var tmi = require("tmi.js");
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+var fs = require('fs');
 const TWITCH_ID=process.env.twitchid;
 const TWITCH_OAUTH=process.env.twitchoauth;
 const OSU_API_KEY=process.env.osuapikey;
 const IRC_PASS=process.env.ircpass;
-var canales=["#gaby12521", "#azer", "#abyssal"];
+const URL=process.env.rutabase;
+var usuarios=obtenerUsuarios();
+var canales=obtenerCanales(usuarios);
 var contador=0;
 var isTimedOut=inicializarTimeouts(canales);
 var cooldown=0;
@@ -191,6 +194,36 @@ client.connect().then(function()
 			{
 				isTimedOut[canal]=false;
 			}, cooldown);
+			if(message.startsWith("!adduser") && userName=="gaby12521")
+			{
+				var query=message.split(" ");
+				var twitch="#"+query[1];
+				var osu=query[2];
+				agregarUsuario(twitch, osu).then(function(data)
+				{
+					client.say(canal, "User "+query[1]+" has been successfully added.");
+				}).catch(function(error)
+				{
+					console.log(error);
+					client.say(canal, "The specified user couldn't be added.");
+				});
+			}
+			else if(message.startsWith("!removeuser") && userName=="gaby12521")
+			{
+				var query=message.split(" ");
+				var usuario="#"+query[1];
+				eliminarUsuario(usuario).then(function(data)
+				{
+					if(usuario!=canal)
+					{
+						client.say(canal, "User "+query[1]+" has been successfully removed.");
+					}
+				}).catch(function(error)
+				{
+					console.log(error);
+					client.say(canal, "The specified user couldn't be removed.");
+				});
+			}
 			if(!esASCII(user))
 			{
 				user=userstate.username;
@@ -552,4 +585,62 @@ function inicializarRepetidos(canales, estaActivo)
 		}, 3600000, repetidos[canales[i]], estaActivo[canales[i]]);
 	}
 	return repetidos;
+}
+function obtenerUsuarios()
+{
+	var data=fs.readFileSync(URL+'canales.json', "utf-8");
+	return JSON.parse(data);
+}
+function obtenerCanales(usuarios)
+{
+	var canales=[];
+	for(var i=0;i<usuarios.length;i++)
+	{
+		canales.push(usuarios[i].twitch);
+	}
+	return canales;
+}
+function agregarUsuario(twitch, osu)
+{
+	canales.push(twitch);
+	usuarios.push({twitch:twitch, osu:osu});
+	fs.writeFile(URL+'canales.json', JSON.stringify(usuarios), "utf-8", function(error)
+	{
+		if(error)
+		{
+			console.log(error);
+		}
+	});
+	return client.join(twitch);
+}
+function eliminarUsuario(canal)
+{
+	var auxiliarCanales=[];
+	for(var i=0;i<canales.length;i++)
+	{
+		if(canales[i]==canal)
+		{
+			continue;
+		}
+		auxiliarCanales.push(canales[i]);
+	}
+	canales=auxiliarCanales;
+	auxiliarUsuarios=[];
+	for(var i=0;i<usuarios.length;i++)
+	{
+		if(usuarios[i].twitch==canal)
+		{
+			continue;
+		}
+		auxiliarUsuarios.push(usuarios[i]);
+	}
+	usuarios=auxiliarUsuarios;
+	fs.writeFile(URL+'canales.json', JSON.stringify(usuarios), "utf-8", function(error)
+	{
+		if(error)
+		{
+			console.log(error);
+		}
+	});
+	return client.part(canal);
 }
