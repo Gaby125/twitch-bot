@@ -692,7 +692,7 @@ function agregarUsuario(twitch, osu)
 		{
 			repetidos.splice(0, repetidos.length);
 		}
-	}, 3600000, repetidos[canales[i]], estaActivo[canales[i]]);
+	}, 3600000, ultimasDiez[twitch], estaActivo[twitch]);
 	Object.defineProperty(intervalos, twitch, {enumerable: true, configurable: true, writable: true, value: intervalo});
 	fs.writeFile(URL+'canales.json', JSON.stringify(usuarios), "utf-8", function(error)
 	{
