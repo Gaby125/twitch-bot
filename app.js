@@ -15,6 +15,7 @@ var cooldown=0;
 var isSourPlsTimedOut=inicializarTimeouts(canales);
 var usuarioRequestId=-1;
 var estaActivo={};
+var intervalos={};
 var ultimasDiez=inicializarRepetidos(canales, estaActivo);
 var options =
 {
@@ -627,6 +628,7 @@ function inicializarRepetidos(canales, estaActivo)
 {
 	var i=0;
 	var repetidos={};
+	var intervalo;
 	for(var i=0;i<canales.length;i++)
 	{
 		Object.defineProperty(repetidos, canales[i],
@@ -643,7 +645,7 @@ function inicializarRepetidos(canales, estaActivo)
 			writable: true,
 			value: false
 		});
-		setInterval(function(repetidos, estaActivo)
+		intervalo=setInterval(function(repetidos, estaActivo)
 		{
 			if(estaActivo)
 			{
@@ -654,6 +656,7 @@ function inicializarRepetidos(canales, estaActivo)
 				repetidos.splice(0, repetidos.length);
 			}
 		}, 3600000, repetidos[canales[i]], estaActivo[canales[i]]);
+		Object.defineProperty(intervalos, canales[i], {enumerable: true, configurable: true, writable: true, value: intervalo});
 	}
 	return repetidos;
 }
@@ -675,6 +678,22 @@ function agregarUsuario(twitch, osu)
 {
 	canales.push(twitch);
 	usuarios.push({twitch:twitch, osu:osu});
+	Object.defineProperty(ultimasDiez, twitch, {enumerable: true, configurable: true, writable: true, value: []});
+	Object.defineProperty(estaActivo, twitch, {enumerable: true, configurable: true, writable: true, value: false});
+	Object.defineProperty(isTimedOut, twitch, {enumerable: true, configurable: true, writable: true, value: false});
+	Object.defineProperty(isSourPlsTimedOut, twitch, {enumerable: true, configurable: true, writable: true, value: false});
+	var intervalo=setInterval(function(repetidos, estaActivo)
+	{
+		if(estaActivo)
+		{
+			estaActivo=false;
+		}
+		else
+		{
+			repetidos.splice(0, repetidos.length);
+		}
+	}, 3600000, repetidos[canales[i]], estaActivo[canales[i]]);
+	Object.defineProperty(intervalos, twitch, {enumerable: true, configurable: true, writable: true, value: intervalo});
 	fs.writeFile(URL+'canales.json', JSON.stringify(usuarios), "utf-8", function(error)
 	{
 		if(error)
@@ -706,6 +725,12 @@ function eliminarUsuario(canal)
 		auxiliarUsuarios.push(usuarios[i]);
 	}
 	usuarios=auxiliarUsuarios;
+	delete ultimasDiez[canal];
+	delete estaActivo[canal];
+	delete isTimedOut[canal];
+	delete isSourPlsTimedOut[canal];
+	clearInterval(intervalos[canal]);
+	delete intervalos[canal];
 	fs.writeFile(URL+'canales.json', JSON.stringify(usuarios), "utf-8", function(error)
 	{
 		if(error)
