@@ -193,7 +193,6 @@ client.connect().then(function()
 							var versiculo=bibleDom.getElementsByTagName("h2")[0].textContent.replace(" (Listen)", "");
 							var texto="🙏 \""+parseVerse(bibleDom.getElementsByClassName("esv-text")[0].innerHTML)+"\" - "+versiculo+" 🙏";
 							client.say(canal, texto);
-							console.log(xhttp.responseText);
 						}
 					}
 				}
