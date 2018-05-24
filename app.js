@@ -1,6 +1,7 @@
 ﻿var tmi = require("tmi.js");
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var fs = require('fs');
+var DOMParser=require("dom-parser");
 const TWITCH_ID=process.env.twitchid;
 const TWITCH_OAUTH=process.env.twitchoauth;
 const OSU_API_KEY=process.env.osuapikey;
@@ -178,6 +179,24 @@ client.connect().then(function()
 				{
 					client.say(canal, "https://clips.twitch.tv/BreakableSecretiveJalapenoRitzMitz?tt_content=chat_card&tt_medium=twitch_chat");
 				}
+				else if(message.startsWith("!bible"))
+				{
+					var xhttp=new XMLHttpRequest();
+					xhttp.open("GET", "http://www.sandersweb.net/bible/verse.php", true);
+					xhttp.send();
+					xhttp.onreadystatechange=function()
+					{
+						if(xhttp.readyState==4 && xhttp.status==200)
+						{
+							var parser=new DOMParser();
+							var bibleDom=parser.parseFromString(xhttp.responseText);
+							var versiculo=bibleDom.getElementsByTagName("h2")[0].textContent.replace(" (Listen)", "");
+							var texto="🙏 \""+parseVerse(bibleDom.getElementsByClassName("esv-text")[0].innerHTML)+"\" - "+versiculo+" 🙏";
+							client.say(canal, texto);
+							console.log(xhttp.responseText);
+						}
+					}
+				}
 				else if(message.includes("SourPls"))
 				{
 					if(!isSourPlsTimedOut[canal])
@@ -190,12 +209,12 @@ client.connect().then(function()
 						}, 10000);
 					}
 				}
+				isTimedOut[canal]=true;
+				setTimeout(function()
+				{
+					isTimedOut[canal]=false;
+				}, cooldown);
 			}
-			isTimedOut[canal]=true;
-			setTimeout(function()
-			{
-				isTimedOut[canal]=false;
-			}, cooldown);
 			if(message.startsWith("!adduser") && userName=="gaby12521")
 			{
 				var query=message.split(" ");
@@ -988,4 +1007,22 @@ function eliminarBlacklisted(mapId, mapNombre, esSet, canal, usuario)
 			}
 		}
 	});
+}
+function parseVerse(verse)
+{
+	var newVerse=verse
+	.replace(/<span class="woc">/g, "")
+	.replace(/<span class="small-caps">Lord<\/span>/g, "Lord")
+	.replace(/<span.*?<\/span>/g, "")
+	.replace(/<\/span>/g, "")
+	.replace(/&#8220;/g, "\'")
+	.replace(/&#8221;/g, "\'")
+	.replace(/&#8222;/g, "—")
+	.replace(/<br\/>/g, " ")
+	.replace(/<p.*?>/g, "")
+	.replace(/<\/p>/g, "")
+	.replace(/<div.*?>/g, "")
+	.replace(/<\/div>/g, "")
+	.replace(/.&nbsp/g, "");
+	return newVerse;
 }
