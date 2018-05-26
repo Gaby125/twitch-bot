@@ -65,6 +65,7 @@ client.connect().then(function()
 		{
 			if(!isTimedOut[canal])
 			{
+				var timeoutActual=false;
 				if(message.startsWith("!roll"))
 				{
 					var dice=Math.floor(Math.random()*101);
@@ -92,10 +93,12 @@ client.connect().then(function()
 					{
 						client.say(canal, user+", you rolled "+dice.toString()+"!!! PogChamp PogChamp PogChamp PogChamp PogChamp");
 					}
+					timeoutActual=true;
 				}
 				else if(message.startsWith("!yowzar"))
 				{
 					client.say(canal, "yowzar has talked "+contador+" times in chat azerFROST");
+					timeoutActual=true;
 				}
 				else if(message.startsWith("!whatis"))
 				{
@@ -114,6 +117,7 @@ client.connect().then(function()
 						}
 					}
 					client.say(canal, "https://en.wikipedia.org/wiki/"+newQuery);
+					timeoutActual=true;
 				}
 				else if(message.startsWith("!whats"))
 				{
@@ -132,6 +136,7 @@ client.connect().then(function()
 						}
 					}
 					client.say(canal, "https://www.urbandictionary.com/define.php?term="+newQuery);
+					timeoutActual=true;
 				}
 				else if(message.startsWith("!fu"))
 				{
@@ -144,6 +149,7 @@ client.connect().then(function()
 					{
 						client.say(canal, "Hey "+message.substring(4)+" azerFROST 🖕");
 					}
+					timeoutActual=true;
 				}
 				else if(message.startsWith("!nani"))
 				{
@@ -162,22 +168,27 @@ client.connect().then(function()
 						}
 					}
 					client.say(canal, "http://jisho.org/search/"+newQuery);
+					timeoutActual=true;
 				}
 				else if(message.startsWith("!maps"))
 				{
 					client.say(canal, "https://www.google.com/maps azerFROST");
+					timeoutActual=true;
 				}
 				else if(message.startsWith("!np"))
 				{
 					client.say(canal, "Current map: https://osu.ppy.sh/b/1033716");
+					timeoutActual=true;
 				}
 				else if(message.startsWith("!mayday"))
 				{
 					client.say(canal, "Unfortunately, "+canal.substring(1)+" has already played the Mayday map and won't play it right now. Thanks for requesting though! azerHappy");
+					timeoutActual=true;
 				}
 				else if(message.startsWith("!maydont"))
 				{
 					client.say(canal, "https://clips.twitch.tv/BreakableSecretiveJalapenoRitzMitz?tt_content=chat_card&tt_medium=twitch_chat");
+					timeoutActual=true;
 				}
 				else if(message.startsWith("!bible"))
 				{
@@ -193,6 +204,7 @@ client.connect().then(function()
 							var versiculo=bibleDom.getElementsByTagName("h2")[0].textContent.replace(" (Listen)", "");
 							var texto="🙏 \""+parseVerse(bibleDom.getElementsByClassName("esv-text")[0].innerHTML)+"\" - "+versiculo+" 🙏";
 							client.say(canal, texto);
+							timeoutActual=true;
 						}
 					}
 				}
@@ -208,11 +220,14 @@ client.connect().then(function()
 						}, 10000);
 					}
 				}
-				isTimedOut[canal]=true;
-				setTimeout(function()
+				if(timeoutActual)
 				{
-					isTimedOut[canal]=false;
-				}, cooldown);
+					isTimedOut[canal]=true;
+					setTimeout(function()
+					{
+						isTimedOut[canal]=false;
+					}, cooldown);
+				}
 			}
 			if(message.startsWith("!adduser") && userName=="gaby12521")
 			{
