@@ -778,7 +778,7 @@ function obtenerBlacklisted()
 	var blacklisted={};
 	try
 	{
-		var data=fs.readFileSync('blacklisted.json', "utf-8");
+		var data=fs.readFileSync(URL+'blacklisted.json', "utf-8");
 		blacklisted=JSON.parse(data);
 	}
 	catch(error)
