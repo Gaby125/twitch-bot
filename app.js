@@ -1037,6 +1037,7 @@ function parseVerse(verse)
 	.replace(/<\/p>/g, "")
 	.replace(/<div.*?>/g, "")
 	.replace(/<\/div>/g, "")
-	.replace(/.&nbsp/g, "");
+	.replace(/.&nbsp/g, "")
+	.replace(/<h4.*?<\/h4>/g, "");
 	return newVerse;
 }
