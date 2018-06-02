@@ -267,10 +267,6 @@ client.connect().then(function()
 			{
 				escucharPM(parseUsuarioOsu(canal), message, null);
 			}
-			if(canal=="#beasttrollmc" && !userstate.subscriber)
-			{
-				return;
-			}
 			if(!esASCII(user))
 			{
 				user=userstate.username;
