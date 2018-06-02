@@ -267,13 +267,13 @@ client.connect().then(function()
 			{
 				escucharPM(parseUsuarioOsu(canal), message, null);
 			}
-			if(!esASCII(user))
-			{
-				user=userstate.username;
-			}
 			if(canal=="#beasttrollmc" && !userstate.subscriber)
 			{
 				return;
+			}
+			if(!esASCII(user))
+			{
+				user=userstate.username;
 			}
 			if(message.startsWith("https://osu.ppy.sh/b/"))
 			{
