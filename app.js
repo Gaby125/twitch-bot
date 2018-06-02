@@ -63,7 +63,7 @@ client.connect().then(function()
 		}
 		setTimeout(function()
 		{
-			if(!isTimedOut[canal])
+			if(!isTimedOut[canal] && canal!="#beasttrollmc")
 			{
 				var timeoutActual=false;
 				if(message.startsWith("!roll"))
@@ -270,6 +270,10 @@ client.connect().then(function()
 			if(!esASCII(user))
 			{
 				user=userstate.username;
+			}
+			if(canal=="#beasttrollmc" && !userstate.subscriber)
+			{
+				return;
 			}
 			if(message.startsWith("https://osu.ppy.sh/b/"))
 			{
