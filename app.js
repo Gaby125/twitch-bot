@@ -271,17 +271,27 @@ client.connect().then(function()
 			{
 				user=userstate.username;
 			}
-			if(message.startsWith("https://osu.ppy.sh/b/") || message.startsWith("https://old.ppy.sh/b/") || message.startsWith("osu.ppy.sh/b/") || message.startsWith("old.ppy.sh/b/"))
+			if(message.startsWith("https://osu.ppy.sh/b/") || message.startsWith("https://old.ppy.sh/b/"))
 			{
 				var mapId=message.split("/")[4].split("&")[0].split(" ")[0].split("+")[0];
 				comenzarRequest(user, canal, mapId, "b", message);
 			}
-			else if(message.startsWith("https://osu.ppy.sh/s/") || message.startsWith("https://old.ppy.sh/s/") || message.startsWith("osu.ppy.sh/s/") || message.startsWith("old.ppy.sh/s/"))
+			else if(message.startsWith("osu.ppy.sh/b/") || message.startsWith("old.ppy.sh/b/"))
+			{
+				var mapId=message.split("/")[2].split("&")[0].split(" ")[0].split("+")[0];
+				comenzarRequest(user, canal, mapId, "b", message);
+			}
+			else if(message.startsWith("https://osu.ppy.sh/s/") || message.startsWith("https://old.ppy.sh/s/"))
 			{
 				var mapId=message.split("/")[4].split("&")[0].split(" ")[0].split("+")[0];
 				comenzarRequest(user, canal, mapId, "s", message);
 			}
-			else if(message.startsWith("https://osu.ppy.sh/beatmapsets/") || message.startsWith("osu.ppy.sh/beatmapsets/"))
+			else if(message.startsWith("osu.ppy.sh/s/") || message.startsWith("old.ppy.sh/s/"))
+			{
+				var mapId=message.split("/")[2].split("&")[0].split(" ")[0].split("+")[0];
+				comenzarRequest(user, canal, mapId, "b", message);
+			}
+			else if(message.startsWith("https://osu.ppy.sh/beatmapsets/"))
 			{
 				if(message.split("/").length<6)
 				{
@@ -296,6 +306,24 @@ client.connect().then(function()
 				else
 				{
 					var mapId=message.split("/")[6].split(" ")[0].split("+")[0];
+					comenzarRequest(user, canal, mapId, "b", message);
+				}
+			}
+			else if(message.startsWith("osu.ppy.sh/beatmapsets/"))
+			{
+				if(message.split("/").length<6)
+				{
+					var mapId=message.split("/")[2].split("#")[0].split(" ")[0].split("+")[0];
+					comenzarRequest(user, canal, mapId, "s", message);
+				}
+				else if(message.split("/").length==6)
+				{
+					var mapId=message.split("/")[3].split(" ")[0].split("+")[0];
+					comenzarRequest(user, canal, mapId, "b", message);
+				}
+				else
+				{
+					var mapId=message.split("/")[4].split(" ")[0].split("+")[0];
 					comenzarRequest(user, canal, mapId, "b", message);
 				}
 			}
