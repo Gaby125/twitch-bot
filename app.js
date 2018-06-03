@@ -45,7 +45,7 @@ client.connect().then(function()
 		var timeout=0;
 		var userName=userstate.username;
 		var user=userstate["display-name"];
-		if(canal=="#azer" || canal=="#gaby12521")
+		if(canal=="#gaby12521")
 		{
 			cooldown=0;
 		}
@@ -271,37 +271,37 @@ client.connect().then(function()
 			{
 				user=userstate.username;
 			}
-			if(message.startsWith("https://osu.ppy.sh/b/"))
+			if(message.startsWith("https://osu.ppy.sh/b/") || message.startsWith("https://old.ppy.sh/b/") || message.startsWith("osu.ppy.sh/b/") || message.startsWith("old.ppy.sh/b/"))
 			{
-				var mapId=message.split("/")[4].split("&")[0].split(" ")[0];
+				var mapId=message.split("/")[4].split("&")[0].split(" ")[0].split("+")[0];
 				comenzarRequest(user, canal, mapId, "b", message);
 			}
-			else if(message.startsWith("https://osu.ppy.sh/s/"))
+			else if(message.startsWith("https://osu.ppy.sh/s/") || message.startsWith("https://old.ppy.sh/s/") || message.startsWith("osu.ppy.sh/s/") || message.startsWith("old.ppy.sh/s/"))
 			{
-				var mapId=message.split("/")[4].split("&")[0].split(" ")[0];
+				var mapId=message.split("/")[4].split("&")[0].split(" ")[0].split("+")[0];
 				comenzarRequest(user, canal, mapId, "s", message);
 			}
-			else if(message.startsWith("https://osu.ppy.sh/beatmapsets/"))
+			else if(message.startsWith("https://osu.ppy.sh/beatmapsets/") || message.startsWith("osu.ppy.sh/beatmapsets/"))
 			{
 				if(message.split("/").length<6)
 				{
-					var mapId=message.split("/")[4].split("#")[0].split(" ")[0];
+					var mapId=message.split("/")[4].split("#")[0].split(" ")[0].split("+")[0];
 					comenzarRequest(user, canal, mapId, "s", message);
 				}
 				else if(message.split("/").length==6)
 				{
-					var mapId=message.split("/")[5].split(" ")[0];
+					var mapId=message.split("/")[5].split(" ")[0].split("+")[0];
 					comenzarRequest(user, canal, mapId, "b", message);
 				}
 				else
 				{
-					var mapId=message.split("/")[6].split(" ")[0];
+					var mapId=message.split("/")[6].split(" ")[0].split("+")[0];
 					comenzarRequest(user, canal, mapId, "b", message);
 				}
 			}
-			else if(message.startsWith("https://osu.ppy.sh/p/beatmap?"))
+			else if(message.startsWith("https://osu.ppy.sh/p/beatmap?") || message.startsWith("osu.ppy.sh/p/beatmap?"))
 			{
-				var mapId=message.split("b=")[1].split("&")[0].split(" ")[0];
+				var mapId=message.split("b=")[1].split("&")[0].split(" ")[0].split("+")[0];
 				comenzarRequest(user, canal, mapId, "b", message);
 			}
 		}, timeout);
