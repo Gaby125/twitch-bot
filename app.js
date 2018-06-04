@@ -63,7 +63,7 @@ client.connect().then(function()
 		}
 		setTimeout(function()
 		{
-			if(!isTimedOut[canal] && canal!="#beasttrollmc")
+			if(!isTimedOut[canal])
 			{
 				var timeoutActual=false;
 				if(message.startsWith("!roll"))
@@ -229,39 +229,73 @@ client.connect().then(function()
 					}, cooldown);
 				}
 			}
-			if(message.startsWith("!adduser") && userName=="gaby12521")
+			if(userName=="gaby12521")
 			{
-				var query=message.split(" ");
-				var twitch="#"+query[1];
-				var osu=query[2];
-				agregarUsuario(twitch, osu).then(function(data)
+				if(message.startsWith("!adduser"))
 				{
-					client.say(canal, "User "+query[1]+" has been successfully added.");
-				}).catch(function(error)
-				{
-					console.log(error);
-					client.say(canal, "The specified user couldn't be added.");
-				});
-			}
-			else if(message.startsWith("!removeuser") && userName=="gaby12521")
-			{
-				var query=message.split(" ");
-				var usuario="#"+query[1];
-				eliminarUsuario(usuario).then(function(data)
-				{
-					if(usuario!=canal)
+					var query=message.split(" ");
+					var twitch="#"+query[1];
+					var osu=query[2];
+					agregarUsuario(twitch, osu).then(function(data)
 					{
-						client.say(canal, "User "+query[1]+" has been successfully removed.");
-					}
-				}).catch(function(error)
+						client.say(canal, "User "+query[1]+" has been successfully added.");
+					}).catch(function(error)
+					{
+						console.log(error);
+						client.say(canal, "The specified user couldn't be added.");
+					});
+				}
+				else if(message.startsWith("!removeuser"))
 				{
-					console.log(error);
-					client.say(canal, "The specified user couldn't be removed.");
-				});
-			}
-			else if(message.startsWith("!checkstatus") && userName=="gaby12521")
-			{
-				mostrarEstado();
+					var query=message.split(" ");
+					var usuario="#"+query[1];
+					eliminarUsuario(usuario).then(function(data)
+					{
+						if(usuario!=canal)
+						{
+							client.say(canal, "User "+query[1]+" has been successfully removed.");
+						}
+					}).catch(function(error)
+					{
+						console.log(error);
+						client.say(canal, "The specified user couldn't be removed.");
+					});
+				}
+				else if(message.startsWith("!checkstatus"))
+				{
+					mostrarEstado();
+				}
+				else if(message.startsWith("!transferbl")
+				{
+					var query=message.split(" ");
+					var canalDesde="#"+query[1];
+					var canalHasta="#"+query[2];
+					transferirBlacklisted(canalDesde, canalHasta, function(error)
+					{
+						if(error)
+						{
+							console.log(error);
+							client.say(canal, "The blacklisted beatmaps couldn't be transfered.");
+							return;
+						}
+						client.say(canal, "The blacklisted beatmaps were transfered successfully.");
+					});
+				}
+				else if(message.startsWith("!removebl")
+				{
+					var query=message.split(" ");
+					var canalQuery="#"+query[1];
+					eliminarUsuarioBlacklisted(canalQuery, function(error)
+					{
+						if(error)
+						{
+							console.log(error);
+							client.say(canal, "The specified user couldn't be removed from blacklists.");
+							return;
+						}
+						client.say(canal, "User "+query[1]+" has been removed from blacklists successfully.");
+					});
+				}
 			}
 			else if((message.startsWith("!blacklist ") || message.startsWith("!bl ")) && "#"+userName==canal)
 			{
@@ -270,10 +304,6 @@ client.connect().then(function()
 			else if((message.startsWith("!whitelist ") || message.startsWith("!wl ")) && "#"+userName==canal)
 			{
 				escucharPM(parseUsuarioOsu(canal), message, null);
-			}
-			if(canal=="#beasttrollmc" && !userstate.subscriber)
-			{
-				return;
 			}
 			if(!esASCII(user))
 			{
@@ -1095,4 +1125,19 @@ function mostrarEstado()
 		}
 		console.log(datos);
 	});
+}
+function transferirBlacklisted(canalDesde, canalHasta, callback)
+{
+	var auxiliar=blacklisted[canalDesde].slice();
+	Object.defineProperty(blacklisted, canalHasta, {enumerable: true, configurable: true, writable: true, value: auxiliar});
+	actualizarBlacklisted(callback);
+}
+function eliminarUsuarioBlacklisted(canal, callback)
+{
+	delete blacklisted[canal];
+	actualizarBlacklisted(callback);
+}
+function actualizarBlacklisted(callback)
+{
+	fs.writeFile(URL+'blacklisted.json', JSON.stringify(blacklisted), "utf-8", callback);
 }
