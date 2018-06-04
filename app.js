@@ -259,6 +259,10 @@ client.connect().then(function()
 					client.say(canal, "The specified user couldn't be removed.");
 				});
 			}
+			else if(message.startsWith("!checkstatus") && userName=="gaby12521")
+			{
+				mostrarEstado();
+			}
 			else if((message.startsWith("!blacklist ") || message.startsWith("!bl ")) && "#"+userName==canal)
 			{
 				escucharPM(parseUsuarioOsu(canal), message, null);
@@ -1072,4 +1076,23 @@ function parseVerse(verse)
 	.replace(/.&nbsp/g, "")
 	.replace(/<h4.*?<\/h4>/g, "");
 	return newVerse;
+}
+function mostrarEstado()
+{
+	fs.readFile(URL+'canales.json', "utf-8", function(error, datos)
+	{
+		if(error)
+		{
+			return;
+		}
+		console.log(datos);
+	});
+	fs.readFile(URL+'blacklisted.json', "utf-8", function(error, datos)
+	{
+		if(error)
+		{
+			return;
+		}
+		console.log(datos);
+	});
 }
