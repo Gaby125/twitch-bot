@@ -265,7 +265,7 @@ client.connect().then(function()
 				{
 					mostrarEstado();
 				}
-				else if(message.startsWith("!transferbl")
+				else if(message.startsWith("!transferbl"))
 				{
 					var query=message.split(" ");
 					var canalDesde="#"+query[1];
@@ -281,7 +281,7 @@ client.connect().then(function()
 						client.say(canal, "The blacklisted beatmaps were transfered successfully.");
 					});
 				}
-				else if(message.startsWith("!removebl")
+				else if(message.startsWith("!removebl"))
 				{
 					var query=message.split(" ");
 					var canalQuery="#"+query[1];
