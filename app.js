@@ -182,7 +182,7 @@ client.connect().then(function()
 				}
 				else if(message.startsWith("!mayday"))
 				{
-					client.say(canal, "Unfortunately, "+canal.substring(1)+" has already played the Mayday map and won't play it right now. Thanks for requesting though! azerHappy");
+					client.say(canal, "Unfortunately, "+parseUsuarioOsu(canal)+" has already played the Mayday map and won't play it right now. Thanks for requesting though! azerHappy");
 					timeoutActual=true;
 				}
 				else if(message.startsWith("!maydont"))
@@ -483,7 +483,7 @@ function requestBeatmap(id, canal, user, callback)
 				}
 				if(!validarBlacklisted(map.beatmap_id, canal))
 				{
-					client.say(canal, "@"+user+" Unfortunately, "+canal.substring(1)+" has blacklisted the beatmap you requested. Try requesting another beatmap azerHappy");
+					client.say(canal, "@"+user+" Unfortunately, "+parseUsuarioOsu(canal)+" has blacklisted the beatmap you requested. Try requesting another beatmap azerHappy");
 					return;
 				}
 				if(!validarRepetido(map.beatmap_id, canal))
