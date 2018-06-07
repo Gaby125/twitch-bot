@@ -10,7 +10,7 @@ const URL=process.env.rutabase;
 var usuarios=obtenerUsuarios();
 var canales=obtenerCanales(usuarios);
 var blacklisted=obtenerBlacklisted();
-var contador=0;
+var contadorYowzar=obtenerContadorYowzar();
 var isTimedOut=inicializarTimeouts(canales);
 var cooldown=0;
 var isSourPlsTimedOut=inicializarTimeouts(canales);
@@ -18,6 +18,7 @@ var usuarioRequestId=-1;
 var estaActivo={};
 var intervalos={};
 var ultimasDiez=inicializarRepetidos(canales, estaActivo);
+var tipoDisplay=obtenerTipoDisplay(canales);
 var options =
 {
     options:
@@ -59,7 +60,7 @@ client.connect().then(function()
 		}
 		if(userName=="yowzar")
 		{
-			contador++;
+			sumarContadorYowzar();
 		}
 		setTimeout(function()
 		{
@@ -97,7 +98,7 @@ client.connect().then(function()
 				}
 				else if(message.startsWith("!yowzar"))
 				{
-					client.say(canal, "yowzar has talked "+contador+" times in chat azerFROST");
+					client.say(canal, "yowzar has talked "+contadorYowzar+" times in chat azerFROST");
 					timeoutActual=true;
 				}
 				else if(message.startsWith("!whatis"))
@@ -297,11 +298,15 @@ client.connect().then(function()
 					});
 				}
 			}
-			else if((message.startsWith("!blacklist ") || message.startsWith("!bl ")) && "#"+userName==canal)
+			if((message.startsWith("!blacklist ") || message.startsWith("!bl ")) && "#"+userName==canal)
 			{
 				escucharPM(parseUsuarioOsu(canal), message, null);
 			}
 			else if((message.startsWith("!whitelist ") || message.startsWith("!wl ")) && "#"+userName==canal)
+			{
+				escucharPM(parseUsuarioOsu(canal), message, null);
+			}
+			else if(message.startsWith("!changedisplay") && "#"+userName==canal)
 			{
 				escucharPM(parseUsuarioOsu(canal), message, null);
 			}
@@ -525,27 +530,37 @@ function iniciarOsuIrc()
 }
 function escucharPM(nick, text, message)
 {
+	var usuarioValido=false;
+	for(var i=0;i<usuarios.length;i++)
+	{
+		if(usuarios[i].osu==nick)
+		{
+			usuarioValido=true;
+			break;
+		}
+	}
+	if(!usuarioValido)
+	{
+		return;
+	}
 	if(text.startsWith("!blacklist ") || text.startsWith("!bl "))
 	{
 		comenzarBlacklist(nick, text, "Blacklist");
 	}
 	else if(text.startsWith("!whitelist ") || text.startsWith("!wl "))
 	{
-		var canal;
-		for(var i=0;i<usuarios.length;i++)
-		{
-			if(usuarios[i].osu==nick)
-			{
-				canal=usuarios[i].twitch;
-				break;
-			}
-		}
+		var canal=parseUsuarioTwitch(nick);
 		if(blacklisted[canal]==undefined || blacklisted[canal].length==0)
 		{
 			ircBot.say(nick, "Whitelist failed. You don't have any blacklisted beatmap currently.");
 			return;
 		}
 		comenzarBlacklist(nick, text, "Whitelist");
+	}
+	else if(text.startsWith("!changedisplay"))
+	{
+		var canal=parseUsuarioTwitch(nick);
+		cambiarTipoDisplay(canal, text);
 	}
 }
 function comenzarBlacklist(nick, text, comando)
@@ -624,15 +639,21 @@ function comenzarRequest(user, canal, mapId, tipo, mensaje)
 {
 	requestBeatmap(tipo+"="+mapId, canal, user, function(datos)
 	{
-		/*var request=user+" \u27a4 "+datos;
+		var request;
+		var separador;
+		if(tipoDisplay[canal]==undefined || tipoDisplay[canal]=="Requestor Last")
+		{
+			request=datos+" - "+user;
+			separador=": ";
+		}
+		else if(tipoDisplay[canal]=="Requestor First")
+		{
+			request=user+" \u27a4 "+datos;
+			separador=" - ";
+		}
 		if(mensaje.split(" ").length>1)
 		{
-			request+=" - Note: "+(mensaje.substring(mensaje.split(" ")[0].length+1));
-		}*/
-		var request=datos+" - "+user;
-		if(mensaje.split(" ").length>1)
-		{
-			request+=": "+(mensaje.substring(mensaje.split(" ")[0].length+1));
+			request+=separador+(mensaje.substring(mensaje.split(" ")[0].length+1));
 		}
 		ircBot.say(parseUsuarioOsu(canal), request);
 	});
@@ -705,6 +726,16 @@ function parseUsuarioOsu(canal)
 		if(canal==usuarios[i].twitch)
 		{
 			return usuarios[i].osu;
+		}
+	}
+}
+function parseUsuarioTwitch(usuario)
+{
+	for(var i=0;i<usuarios.length;i++)
+	{
+		if(usuario==usuarios[i].osu)
+		{
+			return usuarios[i].twitch;
 		}
 	}
 }
@@ -870,19 +901,7 @@ function validarBlacklisted(id, canal)
 }
 function agregarBlacklisted(usuario, mapId, esSet, comando)
 {
-	var canal="";
-	for(var i=0;i<usuarios.length;i++)
-	{
-		if(usuarios[i].osu==usuario)
-		{
-			canal=usuarios[i].twitch;
-			break;
-		}
-	}
-	if(canal=="")
-	{
-		return;
-	}
+	var canal=parseUsuarioTwitch(usuario);
 	var url="https://osu.ppy.sh/api/get_beatmaps?k="+OSU_API_KEY+"&b="+mapId;
 	var xhttp=new XMLHttpRequest();
 	xhttp.open("GET", url, true);
@@ -1140,4 +1159,64 @@ function eliminarUsuarioBlacklisted(canal, callback)
 function actualizarBlacklisted(callback)
 {
 	fs.writeFile(URL+'blacklisted.json', JSON.stringify(blacklisted), "utf-8", callback);
+}
+function obtenerContadorYowzar()
+{
+	try
+	{
+		var datos=fs.readFileSync(URL+'yowzar.json', "utf-8");
+		return JSON.parse(datos).contador;
+	}
+	catch(error)
+	{
+		fs.writeFile(URL+'yowzar.json', JSON.stringify({contador:0}), "utf-8", function(error2)
+		{
+			if(error2)
+			{
+				console.log(error2);
+			}
+		});
+		return 0;
+	}
+}
+function sumarContadorYowzar()
+{
+	contadorYowzar++;
+	fs.writeFile(URL+'yowzar.json', JSON.stringify({contador:contadorYowzar}), "utf-8", null);
+}
+function obtenerTipoDisplay(canales)
+{
+	try
+	{
+		var datos=fs.readFileSync(URL+'displays.json', "utf-8");
+		return JSON.parse(datos);
+	}
+	catch(error)
+	{
+		return {};
+	}
+}
+function cambiarTipoDisplay(canal, text)
+{
+	if(tipoDisplay[canal]==undefined)
+	{
+		Object.defineProperty(tipoDisplay, canal, {enumerable: true, configurable: true, writable: true, value: "Requestor First"});
+	}
+	else if(tipoDisplay[canal]=="Requestor Last")
+	{
+		tipoDisplay[canal]="Requestor First";
+	}
+	else
+	{
+		tipoDisplay[canal]="Requestor Last";
+	}
+	fs.writeFile(URL+'displays.json', JSON.stringify(tipoDisplay), "utf-8", function(error)
+	{
+		if(error)
+		{
+			console.log(error);
+			return;
+		}
+		ircBot.say(parseUsuarioOsu(canal), "Changed display type for requests to \""+tipoDisplay[canal]+"\".");
+	});
 }
