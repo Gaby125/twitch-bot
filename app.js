@@ -493,7 +493,15 @@ function requestBeatmap(id, canal, user, callback)
 				}
 				if(!validarRepetido(map.beatmap_id, canal))
 				{
+					if(canal.startsWith("#chatrooms"))
+					{
+						client.say(canal, "@"+user+" The beatmap you requested has been requested recently by another user. Try requesting another beatmap azerHappy");
+					}
 					return;
+				}
+				if(canal.startsWith("#chatrooms"))
+				{
+					client.say(canal, "@"+user+" Your request \""+map.artist+" - "+map.title+" ["+map.version+"]\""+" has been sent to "+parseUsuarioOsu(canal)+" azerHappy");
 				}
 				var stars=parseFloat(map.difficultyrating).toFixed(2);
 				var mapLength=parseLength(map.total_length);
@@ -1182,7 +1190,7 @@ function obtenerContadorYowzar()
 function sumarContadorYowzar()
 {
 	contadorYowzar++;
-	fs.writeFile(URL+'yowzar.json', JSON.stringify({contador:contadorYowzar}), "utf-8", null);
+	fs.writeFile(URL+'yowzar.json', JSON.stringify({contador:contadorYowzar}), "utf-8", function(error){});
 }
 function obtenerTipoDisplay(canales)
 {
