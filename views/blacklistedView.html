@@ -1,0 +1,12 @@
+<html>
+	<head>
+	</head>
+	<body style="background-color: #a9a9ff">
+		<h3 style="color: white;text-align: center;font-family: Georgia, serif;">{{mensaje}}</h3>
+		<div>
+			{% for bl in lista %}
+				<div><a style="background-color: #ffe6ff;color: #808080;padding: 14px 25px;text-align: center;text-decoration: none;display: block;font-family: Georgia, serif;" href="https://osu.ppy.sh/b/{{bl.id}}">{{bl.nombre}}</a></div>
+			{% endfor %}
+		</div>
+	</body>
+</html>

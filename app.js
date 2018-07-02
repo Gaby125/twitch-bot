@@ -7,6 +7,7 @@ const TWITCH_OAUTH=process.env.twitchoauth;
 const OSU_API_KEY=process.env.osuapikey;
 const IRC_PASS=process.env.ircpass;
 const URL=process.env.rutabase;
+const WEB_URL=process.env.rutaweb
 var usuarios=obtenerUsuarios();
 var canales=obtenerCanales(usuarios);
 var blacklisted=obtenerBlacklisted();
@@ -19,6 +20,7 @@ var estaActivo={};
 var intervalos={};
 var ultimasDiez=inicializarRepetidos(canales, estaActivo);
 var tipoDisplay=obtenerTipoDisplay(canales);
+var blacklistedDisplay={};
 var options =
 {
     options:
@@ -38,6 +40,53 @@ var options =
 };
 var client = new tmi.client(options);
 var ircBot = iniciarOsuIrc();
+//------------express----------------
+var express=require("express");
+var appExpress=express();
+var nunjucks=require("nunjucks");
+appExpress.set("view engine", "html");
+appExpress.set("views", __dirname + "/views");
+var env=nunjucks.configure("views", 
+{
+	autoescape:true,
+	express:appExpress
+});
+appExpress.get("/blacklisted/:osu", function(request, response)
+{
+	//["1605148","1396342","1401173","1401230","1401231","1402538","1411462","1425727","1427152","1435943","1438020","1438725","1442631","1588292","1524103","1524104","1531842","1531843","1543229","1551961","1557471"]
+	var mensaje="";
+	var lista=[];
+	var usuarioOsu=request.params.osu;
+	var usuarioTwitch=parseUsuarioTwitch(usuarioOsu);
+	if(blacklistedDisplay[usuarioTwitch]==undefined)
+	{
+		mensaje="The specified user isn't using this bot or hasn't blacklisted any beatmap yet. ";
+		mensaje+="If that's not the case, try using the \"!blacklisted\" command from this user's twitch channel and try again.";
+	}
+	else if(blacklistedDisplay[usuarioTwitch].length==0)
+	{
+		mensaje=usuarioOsu+" doesn't have any blacklisted beatmap at the moment."
+	}
+	else
+	{
+		if(blacklistedDisplay[usuarioTwitch].length==1)
+		{
+			mensaje=usuarioOsu+" has blacklisted the following beatmap:";
+		}
+		else
+		{
+			mensaje=usuarioOsu+" has blacklisted the following beatmaps:";
+		}
+		lista=blacklistedDisplay[usuarioTwitch];
+		lista.sort(function(b1, b2)
+		{
+			return b1.nombre.localeCompare(b2.nombre);
+		});
+	}
+	response.render("blacklistedView", {mensaje:mensaje, lista:lista});
+});
+appExpress.listen(3000);
+//------------fin express------------
 client.connect().then(function()
 {
 	//notificarSeguidores();
@@ -208,6 +257,11 @@ client.connect().then(function()
 							timeoutActual=true;
 						}
 					}
+				}
+				else if(message.startsWith("!blacklisted"))
+				{
+					cargarBlacklistedDisplay(canal, user);
+					timeoutActual=true;
 				}
 				else if(message.includes("SourPls"))
 				{
@@ -1227,4 +1281,89 @@ function cambiarTipoDisplay(canal, text)
 		}
 		ircBot.say(parseUsuarioOsu(canal), "Changed display type for requests to \""+tipoDisplay[canal]+"\".");
 	});
+}
+function cargarBlacklistedDisplay(canal, user)
+{
+	if(blacklisted[canal]==undefined || blacklisted[canal].length==0)
+	{
+		client.say(canal, "@"+user+" "+parseUsuarioOsu(canal)+" doesn't have any blacklisted beatmap at the moment.");
+		return;
+	}
+	if(blacklistedDisplay[canal]==undefined)
+	{
+		Object.defineProperty(blacklistedDisplay, canal, {enumerable: true, configurable: true, writable: true, value: []});
+		var listaBl=blacklisted[canal];
+		var cantidadBl=listaBl.length;
+		for(var i=0;i<cantidadBl;i++)
+		{
+			obtenerBlacklistedDisplay(listaBl[i], canal, function()
+			{
+				if(blacklistedDisplay[canal].length==cantidadBl)
+				{
+					client.say(canal, "@"+user+" "+WEB_URL+"/blacklisted/"+parseUsuarioOsu(canal));
+				}
+			});
+		}
+		return;
+	}
+	var idRepetidos=[];
+	var blRepetidos=[];
+	for(var i=0;i<blacklistedDisplay[canal].length;i++)
+	{
+		var estaIncluido=false;
+		for(var j=0;j<blacklisted[canal].length;j++)
+		{
+			if(blacklistedDisplay[canal][i].id==blacklisted[canal][j])
+			{
+				estaIncluido=true;
+				break;
+			}
+		}
+		if(estaIncluido)
+		{
+			idRepetidos.push(blacklistedDisplay[canal][i].id);
+			blRepetidos.push(blacklistedDisplay[canal][i]);
+		}
+	}
+	blacklistedDisplay[canal]=blRepetidos;
+	if(blacklistedDisplay[canal].length==blacklisted[canal].length)
+	{
+		client.say(canal, "@"+user+" "+WEB_URL+"/blacklisted/"+parseUsuarioOsu(canal));
+		return;
+	}
+	var nuevosBl=blacklisted[canal].filter(function(id)
+	{
+		return !idRepetidos.includes(id);
+	});
+	for(var i=0;i<nuevosBl.length;i++)
+	{
+		obtenerBlacklistedDisplay(nuevosBl[i], canal, function()
+		{
+			if(blacklistedDisplay[canal].length==blacklisted[canal].length)
+			{
+				client.say(canal, "@"+user+" "+WEB_URL+"/blacklisted/"+parseUsuarioOsu(canal));
+			}
+		});
+		return;
+	}
+}
+function obtenerBlacklistedDisplay(id, canal, callback)
+{
+	var url="https://osu.ppy.sh/api/get_beatmaps?k="+OSU_API_KEY+"&b="+id;
+	var xhttp=new XMLHttpRequest();
+	xhttp.open("GET", url, true);
+	xhttp.send();
+	xhttp.onreadystatechange=function()
+	{
+		if(xhttp.readyState==4)
+		{
+			if(xhttp.status==200)
+			{
+				var respuesta=JSON.parse(xhttp.responseText);
+				var map=respuesta[0];
+				blacklistedDisplay[canal].push({id:id, nombre:map.artist+" - "+map.title+" ["+map.version+"]"});
+				callback();
+			}
+		}
+	}
 }
