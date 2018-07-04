@@ -1286,7 +1286,7 @@ function cambiarTipoDisplay(canal, text)
 }
 function cargarBlacklistedDisplay(canal, user)
 {
-	if(blacklisted[canal]==undefined || blacklisted[canal].length==0)
+	if(blacklisted[canal]==undefined)
 	{
 		client.say(canal, "@"+user+" "+parseUsuarioOsu(canal)+" doesn't have any blacklisted beatmap at the moment.");
 		return;
@@ -1306,6 +1306,11 @@ function cargarBlacklistedDisplay(canal, user)
 				}
 			});
 		}
+		return;
+	}
+	if(blacklistedDisplay[canal].length==0)
+	{
+		client.say(canal, "@"+user+" "+parseUsuarioOsu(canal)+" doesn't have any blacklisted beatmap at the moment.");
 		return;
 	}
 	var idRepetidos=[];
