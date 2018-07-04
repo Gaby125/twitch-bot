@@ -1356,7 +1356,6 @@ function cargarBlacklistedDisplay(canal, user)
 				client.say(canal, "@"+user+" "+WEB_URL+"/blacklisted/"+parseUsuarioOsu(canal));
 			}
 		});
-		return;
 	}
 }
 function obtenerBlacklistedDisplay(id, canal, callback)
