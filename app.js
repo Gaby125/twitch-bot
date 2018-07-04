@@ -1296,6 +1296,11 @@ function cargarBlacklistedDisplay(canal, user)
 		Object.defineProperty(blacklistedDisplay, canal, {enumerable: true, configurable: true, writable: true, value: []});
 		var listaBl=blacklisted[canal];
 		var cantidadBl=listaBl.length;
+		if(cantidadBl==0)
+		{
+			client.say(canal, "@"+user+" "+parseUsuarioOsu(canal)+" doesn't have any blacklisted beatmap at the moment.");
+			return;
+		}
 		for(var i=0;i<cantidadBl;i++)
 		{
 			obtenerBlacklistedDisplay(listaBl[i], canal, function()
@@ -1308,7 +1313,7 @@ function cargarBlacklistedDisplay(canal, user)
 		}
 		return;
 	}
-	if(blacklistedDisplay[canal].length==0)
+	if(blacklistedDisplay[canal].length==0 && blacklisted[canal].length==0)
 	{
 		client.say(canal, "@"+user+" "+parseUsuarioOsu(canal)+" doesn't have any blacklisted beatmap at the moment.");
 		return;
