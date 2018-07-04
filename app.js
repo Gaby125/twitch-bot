@@ -7,7 +7,9 @@ const TWITCH_OAUTH=process.env.twitchoauth;
 const OSU_API_KEY=process.env.osuapikey;
 const IRC_PASS=process.env.ircpass;
 const URL=process.env.rutabase;
-const WEB_URL=process.env.rutaweb
+const WEB_URL=process.env.rutaweb;
+const IP=process.env.ip;
+const PUERTO=process.env.puerto;
 var usuarios=obtenerUsuarios();
 var canales=obtenerCanales(usuarios);
 var blacklisted=obtenerBlacklisted();
@@ -85,7 +87,7 @@ appExpress.get("/blacklisted/:osu", function(request, response)
 	}
 	response.render("blacklistedView", {mensaje:mensaje, lista:lista});
 });
-appExpress.listen(3000);
+appExpress.listen(PUERTO, IP);
 //------------fin express------------
 client.connect().then(function()
 {
