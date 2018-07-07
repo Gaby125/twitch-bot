@@ -55,7 +55,6 @@ var env=nunjucks.configure("views",
 });
 appExpress.get("/blacklisted/:osu", function(request, response)
 {
-	//["1605148","1396342","1401173","1401230","1401231","1402538","1411462","1425727","1427152","1435943","1438020","1438725","1442631","1588292","1524103","1524104","1531842","1531843","1543229","1551961","1557471"]
 	var mensaje="";
 	var lista=[];
 	var usuarioOsu=request.params.osu;
@@ -63,7 +62,7 @@ appExpress.get("/blacklisted/:osu", function(request, response)
 	if(blacklistedDisplay[usuarioTwitch]==undefined)
 	{
 		mensaje="The specified user isn't using this bot or hasn't blacklisted any beatmap yet. ";
-		mensaje+="If that's not the case, try using the \"!blacklisted\" command from this user's twitch channel and try again.";
+		mensaje+="If that's not the case, try using the \"!blacklisted\" command from this user's Twitch channel and try again.";
 	}
 	else if(blacklistedDisplay[usuarioTwitch].length==0)
 	{
@@ -79,13 +78,32 @@ appExpress.get("/blacklisted/:osu", function(request, response)
 		{
 			mensaje=usuarioOsu+" has blacklisted the following beatmaps:";
 		}
-		lista=blacklistedDisplay[usuarioTwitch];
+		lista=blacklistedDisplay[usuarioTwitch].slice();
 		lista.sort(function(b1, b2)
 		{
 			return b1.nombre.localeCompare(b2.nombre);
 		});
+		var sets=[];
+		for(var i=0;i<lista.length;i++)
+		{
+			sets.push({nombre:lista[i].nombre, dificultades:[]});
+			sets[i].dificultades.push({id:lista[i].id, version:lista[i].version, dificultad:lista[i].dificultad});
+			for(var j=i+1;j<lista.length;j++)
+			{
+				if(lista[i].set==lista[j].set)
+				{
+					sets[i].dificultades.push({id:lista[j].id, version:lista[j].version, dificultad:lista[j].dificultad});
+					lista.splice(j, 1);
+					j--;
+				}
+			}
+			sets[i].dificultades.sort(function(d1, d2)
+			{
+				return d1.dificultad-d2.dificultad;
+			});
+		}
 	}
-	response.render("blacklistedView", {mensaje:mensaje, lista:lista});
+	response.render("blacklistedView", {mensaje:mensaje, sets:sets});
 });
 appExpress.listen(PUERTO, IP);
 //------------fin express------------
@@ -1372,7 +1390,7 @@ function obtenerBlacklistedDisplay(id, canal, callback)
 			{
 				var respuesta=JSON.parse(xhttp.responseText);
 				var map=respuesta[0];
-				blacklistedDisplay[canal].push({id:id, nombre:map.artist+" - "+map.title+" ["+map.version+"]"});
+				blacklistedDisplay[canal].push({id:id, nombre:map.artist+" - "+map.title, version:map.version, dificultad:map.difficultyrating, set:map.beatmapset_id});
 				callback();
 			}
 		}
