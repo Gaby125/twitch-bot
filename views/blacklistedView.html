@@ -1,12 +1,26 @@
 <html>
 	<head>
+		<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
 	</head>
-	<body style="background-color: #a9a9ff">
-		<h3 style="color: white;text-align: center;font-family: Georgia, serif;">{{mensaje}}</h3>
-		<div>
-			{% for bl in lista %}
-				<div><a style="background-color: #ffe6ff;color: #808080;padding: 14px 25px;text-align: center;text-decoration: none;display: block;font-family: Georgia, serif;" href="https://osu.ppy.sh/b/{{bl.id}}">{{bl.nombre}}</a></div>
-			{% endfor %}
-		</div>
+	<body class="container" style="background-color: #a9a9ff">
+		<h3 style="color: white;text-align: center;">{{mensaje}}</h3>
+		{% if sets|length %}
+			<table class="table table-bordered table-responsive" style="background-color: #ffe6ff">
+				<tr>
+					<th>Beatmap</th>
+					<th>Difficulties</th>
+				</tr>
+				{% for set in sets %}
+					<tr>
+						<td style="color: #808080">{{set.nombre}}</td>
+						<td>
+							{% for dif in set.dificultades %}
+								<a href="https://osu.ppy.sh/b/{{dif.id}}">[{{dif.version}}]</a>
+							{% endfor %}
+						</td>
+					</tr>
+				{% endfor %}
+			</table>
+		{% endif %}
 	</body>
 </html>
