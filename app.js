@@ -22,6 +22,7 @@ var estaActivo={};
 var intervalos={};
 var ultimasDiez=inicializarRepetidos(canales, estaActivo);
 var tipoDisplay=obtenerTipoDisplay(canales);
+var modoComando=obtenerModoComando(canales);
 var blacklistedDisplay={};
 var options =
 {
@@ -136,164 +137,167 @@ client.connect().then(function()
 			if(!isTimedOut[canal])
 			{
 				var timeoutActual=false;
-				if(message.startsWith("!roll"))
+				if(modoComando[canal]==undefined || modoComando[canal]!="No Additionals")
 				{
-					var dice=Math.floor(Math.random()*101);
-					if(dice==0)
+					if(message.startsWith("!roll"))
 					{
-						client.say(canal, user+", you rolled "+dice.toString()+" OMEGALUL");
-					}
-					else if(dice<10)
-					{
-						client.say(canal, user+", you rolled "+dice.toString()+" LUL");
-					}
-					else if(dice<50)
-					{
-						client.say(canal, user+", you rolled "+dice.toString()+" azerFROST");
-					}
-					else if(dice<90)
-					{
-						client.say(canal, user+", you rolled "+dice.toString()+" SeemsGood");
-					}
-					else if(dice<100)
-					{
-						client.say(canal, user+", you rolled "+dice.toString()+"! PogChamp");
-					}
-					else
-					{
-						client.say(canal, user+", you rolled "+dice.toString()+"!!! PogChamp PogChamp PogChamp PogChamp PogChamp");
-					}
-					timeoutActual=true;
-				}
-				else if(message.startsWith("!yowzar"))
-				{
-					client.say(canal, "yowzar has talked "+contadorYowzar+" times in chat azerFROST");
-					timeoutActual=true;
-				}
-				else if(message.startsWith("!whatis"))
-				{
-					var query=message.split(" ");
-					var newQuery="";
-					for(var i=1;i<query.length;i++)
-					{
-						newQuery+=query[i].charAt(0).toUpperCase() + query[i].slice(1).toString().toLowerCase();
-						if(i+1==query.length)
+						var dice=Math.floor(Math.random()*101);
+						if(dice==0)
 						{
-							break;
+							client.say(canal, user+", you rolled "+dice.toString()+" OMEGALUL");
+						}
+						else if(dice<10)
+						{
+							client.say(canal, user+", you rolled "+dice.toString()+" LUL");
+						}
+						else if(dice<50)
+						{
+							client.say(canal, user+", you rolled "+dice.toString()+" azerFROST");
+						}
+						else if(dice<90)
+						{
+							client.say(canal, user+", you rolled "+dice.toString()+" SeemsGood");
+						}
+						else if(dice<100)
+						{
+							client.say(canal, user+", you rolled "+dice.toString()+"! PogChamp");
 						}
 						else
 						{
-							newQuery+="_";
+							client.say(canal, user+", you rolled "+dice.toString()+"!!! PogChamp PogChamp PogChamp PogChamp PogChamp");
 						}
+						timeoutActual=true;
 					}
-					client.say(canal, "https://en.wikipedia.org/wiki/"+newQuery);
-					timeoutActual=true;
-				}
-				else if(message.startsWith("!whats"))
-				{
-					var query=message.split(" ");
-					var newQuery="";
-					for(var i=1;i<query.length;i++)
+					else if(message.startsWith("!yowzar"))
 					{
-						newQuery+=query[i].charAt(0).toUpperCase() + query[i].slice(1).toString().toLowerCase();
-						if(i+1==query.length)
+						client.say(canal, "yowzar has talked "+contadorYowzar+" times in chat azerFROST");
+						timeoutActual=true;
+					}
+					else if(message.startsWith("!whatis"))
+					{
+						var query=message.split(" ");
+						var newQuery="";
+						for(var i=1;i<query.length;i++)
 						{
-							break;
+							newQuery+=query[i].charAt(0).toUpperCase() + query[i].slice(1).toString().toLowerCase();
+							if(i+1==query.length)
+							{
+								break;
+							}
+							else
+							{
+								newQuery+="_";
+							}
+						}
+						client.say(canal, "https://en.wikipedia.org/wiki/"+newQuery);
+						timeoutActual=true;
+					}
+					else if(message.startsWith("!whats"))
+					{
+						var query=message.split(" ");
+						var newQuery="";
+						for(var i=1;i<query.length;i++)
+						{
+							newQuery+=query[i].charAt(0).toUpperCase() + query[i].slice(1).toString().toLowerCase();
+							if(i+1==query.length)
+							{
+								break;
+							}
+							else
+							{
+								newQuery+="%20";
+							}
+						}
+						client.say(canal, "https://www.urbandictionary.com/define.php?term="+newQuery);
+						timeoutActual=true;
+					}
+					else if(message.startsWith("!fu"))
+					{
+						var query=message.split(" ");
+						if(query.length==1)
+						{
+							client.say(canal, "Hey "+user+" azerFROST 🖕");
 						}
 						else
 						{
-							newQuery+="%20";
+							client.say(canal, "Hey "+message.substring(4)+" azerFROST 🖕");
 						}
+						timeoutActual=true;
 					}
-					client.say(canal, "https://www.urbandictionary.com/define.php?term="+newQuery);
-					timeoutActual=true;
-				}
-				else if(message.startsWith("!fu"))
-				{
-					var query=message.split(" ");
-					if(query.length==1)
+					else if(message.startsWith("!nani"))
 					{
-						client.say(canal, "Hey "+user+" azerFROST 🖕");
-					}
-					else
-					{
-						client.say(canal, "Hey "+message.substring(4)+" azerFROST 🖕");
-					}
-					timeoutActual=true;
-				}
-				else if(message.startsWith("!nani"))
-				{
-					var query=message.split(" ");
-					var newQuery="";
-					for(var i=1;i<query.length;i++)
-					{
-						newQuery+=encodeURIComponent(query[i].toLowerCase());
-						if(i+1==query.length)
+						var query=message.split(" ");
+						var newQuery="";
+						for(var i=1;i<query.length;i++)
 						{
-							break;
+							newQuery+=encodeURIComponent(query[i].toLowerCase());
+							if(i+1==query.length)
+							{
+								break;
+							}
+							else
+							{
+								newQuery+="%20";
+							}
 						}
-						else
-						{
-							newQuery+="%20";
-						}
+						client.say(canal, "http://jisho.org/search/"+newQuery);
+						timeoutActual=true;
 					}
-					client.say(canal, "http://jisho.org/search/"+newQuery);
-					timeoutActual=true;
-				}
-				else if(message.startsWith("!maps"))
-				{
-					client.say(canal, "https://www.google.com/maps azerFROST");
-					timeoutActual=true;
-				}
-				else if(message.startsWith("!np"))
-				{
-					client.say(canal, "Current map: https://osu.ppy.sh/b/1033716");
-					timeoutActual=true;
-				}
-				else if(message.startsWith("!mayday"))
-				{
-					client.say(canal, "Unfortunately, "+parseUsuarioOsu(canal)+" has already played the Mayday map and won't play it right now. Thanks for requesting though! azerHappy");
-					timeoutActual=true;
-				}
-				else if(message.startsWith("!maydont"))
-				{
-					client.say(canal, "https://clips.twitch.tv/BreakableSecretiveJalapenoRitzMitz?tt_content=chat_card&tt_medium=twitch_chat");
-					timeoutActual=true;
-				}
-				else if(message.startsWith("!bible"))
-				{
-					var xhttp=new XMLHttpRequest();
-					xhttp.open("GET", "http://www.sandersweb.net/bible/verse.php", true);
-					xhttp.send();
-					xhttp.onreadystatechange=function()
+					else if(message.startsWith("!maps"))
 					{
-						if(xhttp.readyState==4 && xhttp.status==200)
+						client.say(canal, "https://www.google.com/maps azerFROST");
+						timeoutActual=true;
+					}
+					else if(message.startsWith("!np"))
+					{
+						client.say(canal, "Current map: https://osu.ppy.sh/b/1033716");
+						timeoutActual=true;
+					}
+					else if(message.startsWith("!mayday"))
+					{
+						client.say(canal, "Unfortunately, "+parseUsuarioOsu(canal)+" has already played the Mayday map and won't play it right now. Thanks for requesting though! azerHappy");
+						timeoutActual=true;
+					}
+					else if(message.startsWith("!maydont"))
+					{
+						client.say(canal, "https://clips.twitch.tv/BreakableSecretiveJalapenoRitzMitz?tt_content=chat_card&tt_medium=twitch_chat");
+						timeoutActual=true;
+					}
+					else if(message.startsWith("!bible"))
+					{
+						var xhttp=new XMLHttpRequest();
+						xhttp.open("GET", "http://www.sandersweb.net/bible/verse.php", true);
+						xhttp.send();
+						xhttp.onreadystatechange=function()
 						{
-							var parser=new DOMParser();
-							var bibleDom=parser.parseFromString(xhttp.responseText);
-							var versiculo=bibleDom.getElementsByTagName("h2")[0].textContent.replace(" (Listen)", "");
-							var texto="🙏 \""+parseVerse(bibleDom.getElementsByClassName("esv-text")[0].innerHTML)+"\" - "+versiculo+" 🙏";
-							client.say(canal, texto);
-							timeoutActual=true;
+							if(xhttp.readyState==4 && xhttp.status==200)
+							{
+								var parser=new DOMParser();
+								var bibleDom=parser.parseFromString(xhttp.responseText);
+								var versiculo=bibleDom.getElementsByTagName("h2")[0].textContent.replace(" (Listen)", "");
+								var texto="🙏 \""+parseVerse(bibleDom.getElementsByClassName("esv-text")[0].innerHTML)+"\" - "+versiculo+" 🙏";
+								client.say(canal, texto);
+								timeoutActual=true;
+							}
+						}
+					}
+					else if(message.includes("SourPls"))
+					{
+						if(!isSourPlsTimedOut[canal])
+						{
+							client.say(canal, "SourPls");
+							isSourPlsTimedOut[canal]=true;
+							setTimeout(function()
+							{
+								isSourPlsTimedOut[canal]=false;
+							}, 10000);
 						}
 					}
 				}
-				else if(message.startsWith("!blacklisted"))
+				if(message.startsWith("!blacklisted"))
 				{
 					cargarBlacklistedDisplay(canal, user);
 					timeoutActual=true;
-				}
-				else if(message.includes("SourPls"))
-				{
-					if(!isSourPlsTimedOut[canal])
-					{
-						client.say(canal, "SourPls");
-						isSourPlsTimedOut[canal]=true;
-						setTimeout(function()
-						{
-							isSourPlsTimedOut[canal]=false;
-						}, 10000);
-					}
 				}
 				if(timeoutActual)
 				{
@@ -372,17 +376,28 @@ client.connect().then(function()
 					});
 				}
 			}
-			if((message.startsWith("!blacklist ") || message.startsWith("!bl ")) && "#"+userName==canal)
+			if("#"+userName==canal)
 			{
-				escucharPM(parseUsuarioOsu(canal), message, null);
-			}
-			else if((message.startsWith("!whitelist ") || message.startsWith("!wl ")) && "#"+userName==canal)
-			{
-				escucharPM(parseUsuarioOsu(canal), message, null);
-			}
-			else if(message.startsWith("!changedisplay") && "#"+userName==canal)
-			{
-				escucharPM(parseUsuarioOsu(canal), message, null);
+				if(message.startsWith("!blacklist ") || message.startsWith("!bl "))
+				{
+					escucharPM(parseUsuarioOsu(canal), message, null);
+				}
+				else if(message.startsWith("!whitelist ") || message.startsWith("!wl "))
+				{
+					escucharPM(parseUsuarioOsu(canal), message, null);
+				}
+				else if(message.startsWith("!changedisplay"))
+				{
+					escucharPM(parseUsuarioOsu(canal), message, null);
+				}
+				else if(message.startsWith("!enablecommands"))
+				{
+					cambiarModoComando(canal, "All");
+				}
+				else if(message.startsWith("!disablecommands"))
+				{
+					cambiarModoComando(canal, "No Additionals");
+				}
 			}
 			if(!esASCII(user))
 			{
@@ -1395,4 +1410,29 @@ function obtenerBlacklistedDisplay(id, canal, callback)
 			}
 		}
 	}
+}
+function obtenerModoComando(canales)
+{
+	try
+	{
+		var datos=fs.readFileSync(URL+'modoComando.json', "utf-8");
+		return JSON.parse(datos);
+	}
+	catch(error)
+	{
+		return {};
+	}
+}
+function cambiarModoComando(canal, modo)
+{
+	modoComando[canal]=modo;
+	fs.writeFile(URL+'modoComando.json', JSON.stringify(modoComando), "utf-8", function(error)
+	{
+		if(error)
+		{
+			console.log(error);
+			return;
+		}
+		client.say(canal, "Command mode is now set to \""+modoComando[canal]+"\".");
+	});
 }
