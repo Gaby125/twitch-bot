@@ -900,8 +900,22 @@ function inicializarRepetidos(canales, estaActivo)
 }
 function obtenerUsuarios()
 {
-	var data=fs.readFileSync(URL+'canales.json', "utf-8");
-	return JSON.parse(data);
+	try
+	{
+		var data=fs.readFileSync(URL+'canales.json', "utf-8");
+		return JSON.parse(data);
+	}
+	catch(error)
+	{
+		fs.writeFile(URL+'canales.json', [{"twitch":"#gaby12521","osu":"G_a_b_y"}], "utf-8", function(error)
+		{
+			if(error)
+			{
+				console.log(error);
+			}
+			return [{"twitch":"#gaby12521","osu":"G_a_b_y"}];
+		});
+	}
 }
 function obtenerCanales(usuarios)
 {
