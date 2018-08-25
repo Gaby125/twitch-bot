@@ -65,43 +65,54 @@ appExpress.get("/blacklisted/:osu", function(request, response)
 		mensaje="The specified user isn't using this bot or hasn't blacklisted any beatmap yet. ";
 		mensaje+="If that's not the case, try using the \"!blacklisted\" command from this user's Twitch channel and try again.";
 	}
-	else if(blacklistedDisplay[usuarioTwitch].length==0)
-	{
-		mensaje=usuarioOsu+" doesn't have any blacklisted beatmap at the moment."
-	}
 	else
 	{
-		if(blacklistedDisplay[usuarioTwitch].length==1)
+		lista=blacklistedDisplay[usuarioTwitch].slice();
+		for(var i=0;i<lista.length;i++)
 		{
-			mensaje=usuarioOsu+" has blacklisted the following beatmap:";
+			if(lista[i].nombre==undefined)
+			{
+				lista.splice(i, 1);
+				i--;
+			}
+		}
+		if(blacklistedDisplay[usuarioTwitch].length==0)
+		{
+			mensaje=usuarioOsu+" doesn't have any blacklisted beatmap at the moment."
 		}
 		else
 		{
-			mensaje=usuarioOsu+" has blacklisted the following beatmaps:";
-		}
-		lista=blacklistedDisplay[usuarioTwitch].slice();
-		lista.sort(function(b1, b2)
-		{
-			return b1.nombre.localeCompare(b2.nombre);
-		});
-		var sets=[];
-		for(var i=0;i<lista.length;i++)
-		{
-			sets.push({nombre:lista[i].nombre, dificultades:[]});
-			sets[i].dificultades.push({id:lista[i].id, version:lista[i].version, dificultad:lista[i].dificultad});
-			for(var j=i+1;j<lista.length;j++)
+			if(blacklistedDisplay[usuarioTwitch].length==1)
 			{
-				if(lista[i].set==lista[j].set)
-				{
-					sets[i].dificultades.push({id:lista[j].id, version:lista[j].version, dificultad:lista[j].dificultad});
-					lista.splice(j, 1);
-					j--;
-				}
+				mensaje=usuarioOsu+" has blacklisted the following beatmap:";
 			}
-			sets[i].dificultades.sort(function(d1, d2)
+			else
 			{
-				return d1.dificultad-d2.dificultad;
+				mensaje=usuarioOsu+" has blacklisted the following beatmaps:";
+			}
+			lista.sort(function(b1, b2)
+			{
+				return b1.nombre.localeCompare(b2.nombre);
 			});
+			var sets=[];
+			for(var i=0;i<lista.length;i++)
+			{
+				sets.push({nombre:lista[i].nombre, dificultades:[]});
+				sets[i].dificultades.push({id:lista[i].id, version:lista[i].version, dificultad:lista[i].dificultad});
+				for(var j=i+1;j<lista.length;j++)
+				{
+					if(lista[i].set==lista[j].set)
+					{
+						sets[i].dificultades.push({id:lista[j].id, version:lista[j].version, dificultad:lista[j].dificultad});
+						lista.splice(j, 1);
+						j--;
+					}
+				}
+				sets[i].dificultades.sort(function(d1, d2)
+				{
+					return d1.dificultad-d2.dificultad;
+				});
+			}
 		}
 	}
 	response.render("blacklistedView", {mensaje:mensaje, sets:sets});
@@ -1405,7 +1416,14 @@ function obtenerBlacklistedDisplay(id, canal, callback)
 			{
 				var respuesta=JSON.parse(xhttp.responseText);
 				var map=respuesta[0];
-				blacklistedDisplay[canal].push({id:id, nombre:map.artist+" - "+map.title, version:map.version, dificultad:map.difficultyrating, set:map.beatmapset_id});
+				if(map!=undefined)
+				{
+					blacklistedDisplay[canal].push({id:id, nombre:map.artist+" - "+map.title, version:map.version, dificultad:map.difficultyrating, set:map.beatmapset_id});
+				}
+				else
+				{
+					blacklistedDisplay[canal].push({id:id});
+				}
 				callback();
 			}
 		}
