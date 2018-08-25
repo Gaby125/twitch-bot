@@ -10,6 +10,8 @@ const URL=process.env.rutabase;
 const WEB_URL=process.env.rutaweb;
 const IP=process.env.ip;
 const PUERTO=process.env.puerto;
+const DEFAULT_TWITCH=process.env.defaulttwitch;
+const DEFAULT_OSU=process.env.defaultosu;
 var usuarios=obtenerUsuarios();
 var canales=obtenerCanales(usuarios);
 var blacklisted=obtenerBlacklisted();
@@ -36,7 +38,7 @@ var options =
     },
     identity:
 	{
-        username: "gaby12521",
+        username: DEFAULT_TWITCH,
         password: "oauth:"+TWITCH_OAUTH
     },
     channels: canales
@@ -127,7 +129,7 @@ client.connect().then(function()
 		var timeout=0;
 		var userName=userstate.username;
 		var user=userstate["display-name"];
-		if(canal=="#gaby12521")
+		if(canal=="#"+DEFAULT_TWITCH)
 		{
 			cooldown=0;
 		}
@@ -135,7 +137,7 @@ client.connect().then(function()
 		{
 			cooldown=10000;
 		}
-		if(userName=="gaby12521")
+		if(userName==DEFAULT_TWITCH)
 		{
 			timeout=1000;
 		}
@@ -319,7 +321,7 @@ client.connect().then(function()
 					}, cooldown);
 				}
 			}
-			if(userName=="gaby12521")
+			if(userName==DEFAULT_TWITCH)
 			{
 				if(message.startsWith("!adduser"))
 				{
@@ -617,9 +619,9 @@ function iniciarOsuIrc()
 	{
 		server: "irc.ppy.sh",
 		port: "6667",
-		userName: "G_a_b_y",
-		realName: "G_a_b_y",
-		nick: "G_a_b_y",
+		userName: DEFAULT_OSU,
+		realName: DEFAULT_OSU,
+		nick: DEFAULT_OSU,
 		password: IRC_PASS,
 		retryCount: 0,
 		sasl: false,
@@ -628,7 +630,7 @@ function iniciarOsuIrc()
 
 	var irc = require("irc");
 
-	var bot = new irc.Client("irc.ppy.sh", "G_a_b_y", config);
+	var bot = new irc.Client("irc.ppy.sh", DEFAULT_OSU, config);
 	bot.addListener("pm", escucharPM);
 	bot.addListener("error", function(message)
 	{
@@ -907,13 +909,13 @@ function obtenerUsuarios()
 	}
 	catch(error)
 	{
-		fs.writeFile(URL+'canales.json', [{"twitch":"#gaby12521","osu":"G_a_b_y"}], "utf-8", function(error)
+		fs.writeFile(URL+'canales.json', [{"twitch":"#"+DEFAULT_TWITCH,"osu":DEFAULT_OSU}], "utf-8", function(error)
 		{
 			if(error)
 			{
 				console.log(error);
 			}
-			return [{"twitch":"#gaby12521","osu":"G_a_b_y"}];
+			return [{"twitch":"#"+DEFAULT_TWITCH,"osu":DEFAULT_OSU}];
 		});
 	}
 }
