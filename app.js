@@ -909,14 +909,8 @@ function obtenerUsuarios()
 	}
 	catch(error)
 	{
-		fs.writeFile(URL+'canales.json', [{"twitch":"#"+DEFAULT_TWITCH,"osu":DEFAULT_OSU}], "utf-8", function(error)
-		{
-			if(error)
-			{
-				console.log(error);
-			}
-			return [{"twitch":"#"+DEFAULT_TWITCH,"osu":DEFAULT_OSU}];
-		});
+		fs.writeFileSync(URL+'canales.json', JSON.stringify([{"twitch":"#"+DEFAULT_TWITCH,"osu":DEFAULT_OSU}]), "utf-8");
+		return [{"twitch":"#"+DEFAULT_TWITCH,"osu":DEFAULT_OSU}];
 	}
 }
 function obtenerCanales(usuarios)
