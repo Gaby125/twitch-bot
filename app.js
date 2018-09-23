@@ -119,6 +119,10 @@ appExpress.get("/blacklisted/:osu", function(request, response)
 	}
 	response.render("blacklistedView", {mensaje:mensaje, sets:sets});
 });
+appExpress.get("/commands", function(request, response)
+{
+	response.render("commandsList");
+});
 appExpress.listen(PUERTO, IP);
 //------------fin express------------
 client.connect().then(function()
@@ -294,6 +298,12 @@ client.connect().then(function()
 							}
 						}
 					}
+					else if(message.startsWith("!kms"))
+					{
+						client.say(canal, "/timeout "+userName+" 1");
+						client.say(canal, "@"+user+" 🔫 azerHappy");
+						timeoutActual=true;
+					}
 					else if(message.includes("SourPls"))
 					{
 						if(!isSourPlsTimedOut[canal])
@@ -310,6 +320,11 @@ client.connect().then(function()
 				if(message.startsWith("!blacklisted"))
 				{
 					cargarBlacklistedDisplay(canal, user);
+					timeoutActual=true;
+				}
+				if(message.startsWith("!commands"))
+				{
+					client.say(canal, "@"+user+" "+WEB_URL+"/commands");
 					timeoutActual=true;
 				}
 				if(timeoutActual)

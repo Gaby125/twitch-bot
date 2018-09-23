@@ -1,0 +1,186 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+	</head>
+	<body class="container" style="background-color: #a9a9ff;">
+		<style>
+			ul{
+				background-color: #ffe6ff;
+				padding-top: 10px;
+				padding-bottom: 10px;
+			}
+			li{
+				margin-bottom: 10px;
+			}
+			span i{
+				color: #808080;
+			}
+			div{
+				color: white;
+				background-color: #9999ff;
+				padding-top: 10px;
+				padding-bottom: 1px;
+			}
+			h1, h5{
+				color: white;
+				text-align: center;
+			}
+		</style>
+		<h1>Bot commands</h1>
+		<h5>This page lists all of the commands this bot has to offer.</h5>
+		<div>
+			<h2>Public commands</h2>
+			<p>The following commands are available for everyone to use. Keep in mind that, with the exception of !blacklisted and !commands, all of these can be disabled by typing !disablecommands in chat.</p>
+		</div>
+		<ul>
+			<li>
+				<strong>!blacklisted : </strong><span>Shows the current streamer's blacklisted maps (in case the streamer has any blacklisted beatmaps).<br>
+				Usage: <i>!blacklisted</i><br>
+				Output: <i>&#64;&lt;user&gt; &lt;blacklisted list link&gt;</i></span>
+			</li>
+			<li>
+				<strong>!commands : </strong><span>Shows the command list for this bot (this page).<br>
+				Usage: <i>!commands</i><br>
+				Output: <i>&#64;&lt;user&gt; &lt;command list link&gt;</i></span>
+			</li>
+			<li>
+				<strong>!roll : </strong><span>Rolls a random number between 0 and 100 (inclusive).<br>
+				Usage: <i>!roll</i><br>
+				Output: <i>&lt;user&gt;, you rolled &lt;number&gt; &lt;emote&gt;</i></span>
+			</li>
+			<li>
+				<strong>!whatis : </strong><span>Searchs the specified term on Wikipedia.<br>
+				Usage: <i>!whatis &lt;term&gt;</i><br>
+				Output: <i>https://en.wikipedia.org/wiki/&lt;term&gt;</i></span>
+			</li>
+			<li>
+				<strong>!whats : </strong><span>Searchs the specified term on Urban Dictionary.<br>
+				Usage: <i>!whats &lt;term&gt;</i><br>
+				Output: <i>https://www.urbandictionary.com/define.php?term=&lt;term&gt;</i></span>
+			</li>
+			<li>
+				<strong>!nani : </strong><span>Searchs the specified term on Jisho (japanese dictionary). You can use non-unicode characters (e.g. Kanjis) to perform the search.<br>
+				Usage: <i>!nani &lt;term&gt;</i><br>
+				Output: <i>http://jisho.org/search/&lt;term&gt;</i></span>
+			</li>
+			<li>
+				<strong>!fu : </strong><span>Flips the bird to someone/something. If no text is specified, you flip yourself.<br>
+				Usage: <i>!fu &lt;text&gt;</i><br>
+				Output: <i>Hey &lt;text&gt; azerFROST 🖕</i></span>
+			</li>
+			<li>
+				<strong>!np : </strong><span>Rick rolls people that want to know the currently playing map.<br>
+				Usage: <i>!np</i><br>
+				Output: <i>Current map: https://osu.ppy.sh/b/1033716</i></span>
+			</li>
+			<li>
+				<strong>!maps : </strong><span>Baits people that expect the streamer's map collection.<br>
+				Usage: <i>!maps</i><br>
+				Output: <i>https://www.google.com/maps azerFROST</i></span>
+			</li>
+			<li>
+				<strong>!mayday : </strong><span>Displays a message for streamers that are tired of getting the Mayday map requested.<br>
+				Usage: <i>!mayday</i><br>
+				Output: <i>Unfortunately, &lt;streamer&gt; has already played the Mayday map and won't play it right now. Thanks for requesting though! azerHappy</i></span>
+			</li>
+			<li>
+				<strong>!maydont : </strong><span>Shows a clip of Azer talking about the Mayday map.<br>
+				Usage: <i>!maydont</i><br>
+				Output: <i>https://clips.twitch.tv/BreakableSecretiveJalapenoRitzMitz?tt_content=chat_card&tt_medium=twitch_chat</i></span>
+			</li>
+			<li>
+				<strong>!bible : </strong><span>Displays a random bible verse out of a selected collection of verses. Source: http://www.sandersweb.net/bible/verse.php<br>
+				Usage: <i>!bible</i><br>
+				Output: <i>🙏 " &lt;verse contents&gt; " - &lt;verse name&gt; 🙏</i></span>
+			</li>
+			<li>
+				<strong>!kms : </strong><span>Times you out for one second, only if the bot account is admin and your account is not admin or the broadcaster.<br>
+				Usage: <i>!kms</i><br>
+				Output: <i>&#64;&lt;user&gt; &#x1F52B azerHappy</i></span>
+			</li>
+			<li>
+				<strong>!yowzar : </strong><span>Displays the amount of times the user yowzar has talked in chats where the bot is active.<br>
+				Usage: <i>!yowzar</i><br>
+				Output: <i>yowzar has talked &lt;amount&gt; times in chat azerFROST</i></span>
+			</li>
+		</ul>
+		<div>
+			<h2>Streamer-only commands</h2>
+			<p>The following commands are available only for the streamer to use.</p>
+		</div>
+		<ul>
+			<li>
+				<strong>!blacklist : </strong><span>Blacklists a map, which means users won't be able to request said map. You can use <i>!bl</i> as a shortcut.
+				Keep in mind that the link has to be the one of a single difficulty. If you want to blacklist a set, you need to specify <i>-set</i> at the end.<br>
+				Usage for single difficulty: <i>!blacklist &lt;single difficulty beatmap link&gt;</i><br>
+				Output for single difficulty: <i>The beatmap &lt;beatmap name&gt; was blacklisted successfully.</i></span><br>
+				Usage for sets: <i>!blacklist &lt;single difficulty beatmap link&gt; -set</i><br>
+				Output for sets: <i>The beatmap set &lt;beatmap name&gt; was blacklisted successfully.</i></span>
+			</li>
+			<li>
+				<strong>!whitelist : </strong><span>Whitelists a blacklisted map, which means users can request it again. You can use <i>!wl</i> as a shortcut.
+				Keep in mind that the link has to be the one of a single difficulty. If you want to whitelist a set, you need to specify <i>-set</i> at the end.
+				Of course, non-blacklisted maps can't be whitelisted.<br>
+				Usage for single difficulty: <i>!whitelist &lt;single difficulty beatmap link&gt;</i><br>
+				Output for single difficulty: <i>The beatmap &lt;beatmap name&gt; was whitelisted successfully.</i></span><br>
+				Usage for sets: <i>!whitelist &lt;single difficulty beatmap link&gt; -set</i><br>
+				Output for sets: <i>The beatmap set &lt;beatmap name&gt; was whitelisted successfully.</i></span>
+			</li>
+			<li>
+				<strong>!changedisplay : </strong><span>Changes the way the requests are showed on osu chat. There's currently two modes:<br>
+				Requestor Last (default): The username of the requestor shows at the end of the request message.<br>
+				Requestor First: The username of the requestor shows at the beginning of the request message.<br>
+				By using this command, you toggle between the two of these.<br>
+				Usage: <i>!changedisplay</i><br>
+				Output: <i>Changed display type for requests to "&lt;mode&gt;".</i></span>
+			</li>
+			<li>
+				<strong>!disablecommands : </strong><span>Disables all of the public commands with the exception of !blacklisted and !commands.<br>
+				Usage: <i>!disablecommands</i><br>
+				Output: <i>Command mode is now set to "No Additionals".</i></span>
+			</li>
+			<li>
+				<strong>!enablecommands : </strong><span>Enables all of the public commands.<br>
+				Usage: <i>!enablecommands</i><br>
+				Output: <i>Command mode is now set to "All".</i></span>
+			</li>
+		</ul>
+		<div>
+			<h2>Administrator-only commands</h2>
+			<p>The following commands are available only for the bot owner to use. These are useful if you are running the bot yourself by cloning the git repository.</p>
+		</div>
+		<ul>
+			<li>
+				<strong>!adduser : </strong><span>Adds a user to the users list. This means the bot will be available in the specified user's twitch chat.
+				Keep in mind that the twitch username is NOT the same as the display name. Rather, it's the name that is present in the URL of the user's twitch channel.
+				Also keep in mind that the osu! username is case-sensitive, and every whitespace (if any) has to be replaced with an underscore.
+				For example, the osu! username <i>Example Name</i> would be written as <i>Example_Name</i>.<br>
+				Usage: <i>!adduser &lt;twitch username&gt; &lt;osu! username&gt;</i><br>
+				Output: <i>User &lt;twitch username&gt; has been successfully added.</i></span>
+			</li>
+			<li>
+				<strong>!removeuser : </strong><span>Removes a user from the users list. This means the bot will no longer be available in the specified user's twitch chat.
+				The same rules for !adduser apply here, except you don't have to type the osu! username.<br>
+				Usage: <i>!removeuser &lt;twitch username&gt;</i><br>
+				Output: <i>User &lt;twitch username&gt; has been successfully removed.</i></span>
+			</li>
+			<li>
+				<strong>!checkstatus : </strong><span>Logs in the console the list of channels and blacklisted beatmaps for each channel in json format.
+				This is useful if you have access to the console but not the filesystem.<br>
+				Usage: <i>!checkstatus</i><br>
+				Output: <i>&lt;user list json array&gt; &lt;blacklisted list json object&gt;</i></span>
+			</li>
+			<li>
+				<strong>!transferbl : </strong><span>Transfers the blacklisted beatmaps from one user to another. This can be useful if a user has changed their account and they want to keep
+				their blacklisted beatmaps on their new account, or if you just want an user to have the same blacklisted beatmaps as another user.<br>
+				Usage: <i>!transferbl &lt;twitch username from&gt; &lt;twitch username to&gt;</i><br>
+				Output: <i>The blacklisted beatmaps were transfered successfully.</i></span>
+			</li>
+			<li>
+				<strong>!removebl : </strong><span>Removes all of the blacklisted beatmaps for the specified user. More specifically, it removes the user from the blacklisted list json object.<br>
+				Usage: <i>!removebl &lt;twitch username&gt;</i><br>
+				Output: <i>User &lt;twitch username&gt; has been removed from blacklists successfully.</i></span>
+			</li>
+		</ul>
+	</body>
+</html>
